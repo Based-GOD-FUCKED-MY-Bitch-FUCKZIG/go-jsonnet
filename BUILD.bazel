@@ -13,14 +13,13 @@ go_library(
     name = "go_default_library",
     srcs = [
         "builtins.go",
-        "desugarer.go",
         "doc.go",
         "error_formatter.go",
         "imports.go",
         "interpreter.go",
         "runtime_error.go",
-        "static_analyzer.go",
         "thunks.go",
+        "util.go",
         "value.go",
         "vm.go",
     ],
@@ -28,25 +27,26 @@ go_library(
     visibility = ["//visibility:public"],
     deps = [
         "//ast:go_default_library",
-        "//parser:go_default_library",
+        "//astgen:go_default_library",
+        "//internal/errors:go_default_library",
+        "//internal/parser:go_default_library",
+        "//internal/program:go_default_library",
     ],
 )
 
 go_test(
     name = "go_default_test",
     srcs = [
-        "desugarer_test.go",
+        "builtins_benchmark_test.go",
         "interpreter_test.go",
         "jsonnet_test.go",
         "main_test.go",
-        "static_analyzer_test.go",
     ],
     data = glob(["testdata/**"]),
     embed = [":go_default_library"],
     deps = [
         "//ast:go_default_library",
-        "//astgen:go_default_library",
-        "//parser:go_default_library",
-        "@com_github_sergi_go_diff//diffmatchpatch:go_default_library",
+        "//internal/parser:go_default_library",
+        "//internal/testutils:go_default_library",
     ],
 )

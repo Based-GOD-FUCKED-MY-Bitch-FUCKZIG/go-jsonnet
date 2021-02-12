@@ -6,8 +6,9 @@ go_library(
     importpath = "github.com/google/go-jsonnet/cmd/dumpstdlibast",
     visibility = ["//visibility:private"],
     deps = [
-        "//:go_default_library",
-        "//dump:go_default_library",
+        "//ast:go_default_library",
+        "//internal/dump:go_default_library",
+        "//internal/program:go_default_library",
     ],
 )
 

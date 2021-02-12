@@ -19,8 +19,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/go-jsonnet"
-	"github.com/google/go-jsonnet/dump"
+	"github.com/google/go-jsonnet/ast"
+	"github.com/google/go-jsonnet/internal/dump"
+	"github.com/google/go-jsonnet/internal/program"
 )
 
 func main() {
@@ -33,7 +34,7 @@ func main() {
 		panic(err)
 	}
 
-	node, err := jsonnet.SnippetToAST("<std>", string(buf))
+	node, err := program.SnippetToAST(ast.DiagnosticFileName("<std>"), "", string(buf))
 	if err != nil {
 		panic(err)
 	}
@@ -44,8 +45,14 @@ func main() {
 	ast := dump.Sdump(node)
 
 	dst := os.Stdout
-	dst.WriteString(header)
-	dst.WriteString(ast)
+	_, err = dst.WriteString(header)
+	if err != nil {
+		panic(err)
+	}
+	_, err = dst.WriteString(ast)
+	if err != nil {
+		panic(err)
+	}
 }
 
 var header = `
@@ -62,7 +69,4 @@ import (
 	"github.com/google/go-jsonnet/ast"
 )
 
-func init() {
-	ast.StdAst = StdAst
-}
 `[1:]

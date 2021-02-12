@@ -6,9 +6,7 @@ extern "C" {
     #include "internal.h"
 }
 
-#include "json.h"
-
-struct JsonnetVm *jsonnet_internal_make_vm_with_id(uint32_t id) {
+struct JsonnetVm *jsonnet_internal_make_vm_with_id(uintptr_t id) {
     JsonnetVm *vm = new JsonnetVm();
     vm->id = id;
     return vm;
@@ -18,9 +16,38 @@ void jsonnet_internal_free_vm(struct JsonnetVm *x) {
     delete(x);
 }
 
-inline static void todo() {
-    fputs("TODO, NOT IMPLEMENTED YET\n", stderr);
-    abort();
+struct JsonnetJsonValue *jsonnet_internal_make_json_with_id(uintptr_t id) {
+    JsonnetJsonValue *json = new JsonnetJsonValue();
+    json->id = id;
+    return json;
+}
+
+void jsonnet_internal_free_json(struct JsonnetJsonValue *x) {
+    delete(x);
+}
+
+struct JsonnetJsonValue* jsonnet_internal_execute_native(JsonnetNativeCallback *cb,
+                                                         void *ctx,
+                                                         const struct JsonnetJsonValue *const *argv,
+                                                         int *success)
+{
+    return (cb)(ctx, argv, success);
+}
+
+char* jsonnet_internal_execute_import(JsonnetImportCallback *cb,
+                                      void *ctx,
+                                      const char *base,
+                                      const char *rel,
+                                      char **found_here,
+                                      int *success)
+{
+    return (cb)(ctx, base, rel, found_here, success);
+}
+
+void jsonnet_internal_free_string(char *str) {
+    if (str != nullptr) {
+        ::free(str);
+    }
 }
 
 void jsonnet_gc_min_objects(struct JsonnetVm *vm, unsigned v) {
@@ -58,36 +85,4 @@ char *jsonnet_realloc(JsonnetVm *vm, char *str, size_t sz)
             return r;
         }
     }
-}
-
-void jsonnet_native_callback(struct JsonnetVm *vm, const char *name, JsonnetNativeCallback *cb,
-    void *ctx, const char *const *params)
-{
-    todo();
-}
-
-char *jsonnet_evaluate_file_multi(JsonnetVm *vm, const char *filename, int *error)
-{
-    todo();
-    return nullptr;
-}
-
-char *jsonnet_evaluate_file_stream(JsonnetVm *vm, const char *filename, int *error)
-{
-    todo();
-    return nullptr;
-}
-
-char *jsonnet_evaluate_snippet_multi(JsonnetVm *vm, const char *filename, const char *snippet,
-                                     int *error)
-{
-    todo();
-    return nullptr;
-}
-
-char *jsonnet_evaluate_snippet_stream(JsonnetVm *vm, const char *filename, const char *snippet,
-                                      int *error)
-{
-    todo();
-    return nullptr;
 }
